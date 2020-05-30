@@ -40,7 +40,7 @@ if(POLICY CMP0056)
 	cmake_policy(SET CMP0056 NEW)
 endif()
 
-list (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/bilke")
+list (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 # Set the Git repository root directory
 execute_process (

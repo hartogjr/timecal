@@ -36,7 +36,7 @@ int help(const std::string & msg = "")
 	cerr << appname << " 23:12 2:54 # will return 02:06" << endl;
 	return retval;
 }
-
+/*
 int run(const std::string & duration, const std::string & reftime = "")
 {
 	uint8_t refhour, refmin;
@@ -76,6 +76,7 @@ int run(const std::string & duration, const std::string & reftime = "")
 			msg.append(reftime);
 			msg.append("\" specified");
 			return help(msg);
+			*/
 
 int main(int argc, char *argv[])
 {

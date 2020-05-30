@@ -34,11 +34,14 @@
 
 #include <cstdint>
 #include <ctime>
+#include <stdexcept>
 #include <string>
+
+#define UNUSED(expr) (void)(expr)
 
 namespace SdH {
 
-	class HourMinute
+	class HoursMinutes
 	{
 		protected:
 			/** Number of hours in 24-hour format. */
@@ -49,53 +52,99 @@ namespace SdH {
 
 		public:
 			/** Empty constructor initializes to 00:00 */
-			inline HourMinute() : hours_a(0), minutes_a(0) {}
+			inline HoursMinutes() : hours_a(0), minutes_a(0) {}
 
 			/** String constructor reads HH:MM
 			 * @param hm_i String to parse
 			 * @throws std::invalid_argument when string can't be parsed. */
-			HourMinute(const std::string & hm_i);
+			inline HoursMinutes(const std::string & hm_i) {
+				set(hm_i);
+			}
 
 			/** Copy constructor is default. */
-			HourMinute(const HourMinute & obj_i) = default;
+			HoursMinutes(const HoursMinutes & obj_i) = default;
 
 			/** Initialization constructor.
 			 * @param hour_i Number of hours in 24-hour format.
 			 * @param minutes_i Number of minutes.
-			 * @throws std::out_of_range when any parameter is out of range.
+			 * @throws std::overflow_error when any parameter is out of range.
 			 */
-			HourMinute(const uint8_t hours_i, const uint8_t minutes_i);
+			inline HoursMinutes(const uint8_t hours_i, const uint8_t minutes_i) {
+				hours(hours_i); minutes(minutes_i);
+			}
 
 			/** Epoch constructor.
 			 * @param time_i Epoch timestamp to initialize from. */
-			HourMinute(const time_t & time_i);
+			inline HoursMinutes(const time_t & time_i) {
+				set(time_i);
+			}
+
+			/** Get the number of hours in 24-hour format.
+			 * @returns Internal number of hours. */
+			inline uint8_t hours() const { return hours_a; }
+
+			/** Manually set the number of hours.
+			 * @param hours_i Hours to set in 24-hour format.
+			 * @throws std::overflow_error in case @p hours_i > 23. */
+			inline void hours(const uint8_t hours_i) {
+				if (hours_i > 23) throw std::overflow_error("Hours should be smaller than 24.");
+				hours_a = hours_i;
+			}
+
+			/** Get the number of minutes.
+			 * @returns Internal number of minutes. */
+			inline uint8_t minutes() const { return minutes_a; }
+
+			/** Manually set the number of minutes.
+			 * @param minutes_i Number of minutes to set.
+			 * @throws std::overflow_error in case @p minutes_i > 59. */
+			inline void minutes(const uint8_t minutes_i) {
+				if (minutes_i > 59) throw std::overflow_error("Minutes should be smaller than 60.");
+				minutes_a = minutes_i;
+			}
 
 			/** Add in-place object operator.
-			 * @param rhs_i Righthand side HourMinute object to add to this
+			 * @param rhs_i Righthand side HoursMinutes object to add to this
 			 * one.
 			 * @returns A reference to the current object with @p rhs_i added.
 			 */
-			HourMinute & operator+=(const HourMinute & rhs_i);
+			HoursMinutes & operator+=(const HoursMinutes & rhs_i);
 
 			/** Add in-place string operator.
 			 * @param rhs_i Righthand side string to parse and add to this
 			 * object.
 			 * @returns A reference to the current object with @p rhs_i added.
 			 */
-			inline HourMinute & operator+=(const std::string & rhs_i) {
-				return (*this) += HourMinute(rhs_i);
+			inline HoursMinutes & operator+=(const std::string & rhs_i) {
+				return (*this) += HoursMinutes(rhs_i);
 			}
 
 			/** Addition operator. */
-			inline HourMinute operator+(const HourMinute & rhs_i) const {
-				HourMinute retval(*this);
+			inline HoursMinutes operator+(const HoursMinutes & rhs_i) const {
+				HoursMinutes retval(*this);
 				return retval += rhs_i;
 			}
 
-			/** Shortcut to get an HourMinute object with the current local
+			/** Check whether the set time is zero (00:00).
+			 * @returns True if zero (00:00), false if another time is set. */
+			inline bool isZero() const { return hours_a == 0 && minutes_a == 0; }
+
+			/** Shortcut to get an HoursMinutes object with the current local
 			 * time.
 			 * @return An object with the current local time. */
-			static inline HourMinute now() const { return HourMinute(time(nullptr)); }
+			static inline HoursMinutes now() { return HoursMinutes(time(nullptr)); }
+
+			/** Reset the time to zero (00:00) */
+			inline void reset() { hours_a = 0; minutes_a = 0; }
+
+			/** Set the time from a string formatted like HH:MM.
+			 * @param hm_i String to parse
+			 * @throws std::invalid_argument when string can't be parsed. */
+			void set(const std::string & hm_i);
+
+			/** Set the time from an epoch value.
+			 * @param time_i Epoch timestamp to use. */
+			void set(const time_t & time_i);
 
 	};
 
