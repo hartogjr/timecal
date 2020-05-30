@@ -8,62 +8,32 @@
 using std::cerr, std::cin, std::cout, std::endl;
 
 std::string appname;
-uint8_t curhour;
-uint8_t curmin;
-
-void setCurrentTime()
-{
-	time_t epoch;
-	struct tm * tmptr = nullptr;
-
-	/* The time(2) man-page says:
-	 * SYNOPSIS: time_t time(time_t *tloc);
-	 * When tloc is NULL, the call cannot fail.
-	 * So no error checking required! ;-D */
-	epoch = time(NULL);
-	errno = 0;
-	tmptr = localtime(&epoch);
-
-	if (tmptr == nullptr) {
-		cerr << appname << ": Failed determining current time";
-		if (errno) cerr << ": " << strerror(errno);
-		cerr << endl;
-		exit(1);
-	}
-
-	curhour = tmptr->tm_hour;
-	curmin = tmptr->tm_min;
-}
 
 int help(const std::string & msg = "")
 {
 	int retval = 0;
 
-	setCurrentTime();
-
 	if (!msg.empty()) {
 		cerr << "Error: " << msg << endl << endl;
 		retval = 1;
 	}
-	cerr << "Usage: " << appname << " [<HH>:<MM>] [[<H>h]MM]" << endl;
+	cerr << "Usage: " << appname << " [<HH>:<MM>] [[<HH>:]MM]" << endl;
 	cerr << "This application calculates the time after a specified" << endl;
 	cerr << "duration, with an optional reference time. The default" << endl;
-	cerr << "reference time is now (currently ";
-	cerr << std::setw(2) << set::setfill('0') << curhour << ':' << curmin;
-	cerr << "). It takes care of durations that" << endl;
-	cerr << "cross a day boundary." << endl;
+	cerr << "reference time is now." << endl;
+	cerr << "It takes care of durations that cross a day boundary." << endl;
 	cerr << "When no parameters are given, it enters interactive mode." << endl;
 	cerr << "In this mode, each line you enter is interpreted as a call" << endl;
 	cerr << "to " << appname << " with the entered line as suffix, so" << endl;
 	cerr << "containing one or two parameters." << endl;
 	cerr << "[<HH>:<MM>]   Optional reference time instead of the current time." << endl;
 	cerr << "              Use 24-hour time format." << endl;
-	cerr << "[<H>h]MM      Duration to add to reference time. The optional H is the number" << endl;
-	cerr << "              of hours to add with a literal 'h' as separator. The MM" << endl;
+	cerr << "[<HH>:]MM      Duration to add to reference time. The optional H is the number" << endl;
+	cerr << "              of hours to add with a literal ':' as separator. The MM" << endl;
 	cerr << "              are the number of minutes to add. " << endl << endl;
 	cerr << "Examples:" << endl;
-	cerr << appname << " 09:34 1h48 # will return 11:22" << endl;
-	cerr << appname << " 23:12 2h54 # will return 02:06" << endl;
+	cerr << appname << " 09:34 1:48 # will return 11:22" << endl;
+	cerr << appname << " 23:12 2:54 # will return 02:06" << endl;
 	return retval;
 }
 
