@@ -36,6 +36,14 @@
 
 #define CHECKNAME hoursminutesCheck
 
+#define VALIDATE(STR, HRS, MINUTES) \
+{ \
+	CPPUNIT_ASSERT_NO_THROW(SdH::HoursMinutes hm(STR)); \
+	SdH::HoursMinutes hm(STR); \
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint8_t>(HRS), hm.hours()); \
+	CPPUNIT_ASSERT_EQUAL(static_cast<uint8_t>(MINUTES), hm.minutes()); \
+}
+
 class CHECKNAME;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CHECKNAME);
@@ -50,14 +58,6 @@ class CHECKNAME : public CppUnit::TestFixture {
 	CHECKNAME()
 	{ }
 
-	void validate(const std::string & hm_i, const uint8_t hrs_i, const uint8_t mins_i)
-	{
-		CPPUNIT_ASSERT_NO_THROW(SdH::HoursMinutes hm(hm_i));
-		SdH::HoursMinutes hm(hm_i);
-		CPPUNIT_ASSERT_EQUAL(hrs_i, hm.hours());
-		CPPUNIT_ASSERT_EQUAL(mins_i, hm.minutes());
-	}
-
 	void constructors() {
 		// Empty constructor
 		{
@@ -71,22 +71,22 @@ class CHECKNAME : public CppUnit::TestFixture {
 		// expected ;-)
 
 		// String constructor, with zeroes first
-		validate("", 0, 0);
-		validate("0", 0, 0);
-		validate("00", 0, 0);
+		VALIDATE("", 0, 0);
+		VALIDATE("0", 0, 0);
+		VALIDATE("00", 0, 0);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000"), std::invalid_argument);
-		validate(":", 0, 0);
+		VALIDATE(":", 0, 0);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("::"), std::invalid_argument);
-		validate(":0", 0, 0);
-		validate(":00", 0, 0);
+		VALIDATE(":0", 0, 0);
+		VALIDATE(":00", 0, 0);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm(":000"), std::invalid_argument);
-		validate("0:", 0, 0);
-		validate("0:0", 0, 0);
-		validate("0:00", 0, 0);
+		VALIDATE("0:", 0, 0);
+		VALIDATE("0:0", 0, 0);
+		VALIDATE("0:00", 0, 0);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("0:000"), std::invalid_argument);
-		validate("00:", 0, 0);
-		validate("00:0", 0, 0);
-		validate("00:00", 0, 0);
+		VALIDATE("00:", 0, 0);
+		VALIDATE("00:0", 0, 0);
+		VALIDATE("00:00", 0, 0);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("00:000"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:0"), std::invalid_argument);
@@ -94,40 +94,40 @@ class CHECKNAME : public CppUnit::TestFixture {
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:000"), std::invalid_argument);
 
 		// String constructor with only single digit minutes
-		validate("7", 0, 7);
-		validate("07", 0, 7);
+		VALIDATE("7", 0, 7);
+		VALIDATE("07", 0, 7);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("007"), std::invalid_argument); // Invalid James Bond time!
-		validate(":7", 0, 7);
-		validate(":07", 0, 7);
+		VALIDATE(":7", 0, 7);
+		VALIDATE(":07", 0, 7);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm(":007"), std::invalid_argument); // Invalid James Bond time!
-		validate("0:7", 0, 7);
-		validate("0:07", 0, 7); // Proper James Bond time!
+		VALIDATE("0:7", 0, 7);
+		VALIDATE("0:07", 0, 7); // Proper James Bond time!
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("0:007"), std::invalid_argument);
-		validate("00:7", 0, 7); // Also valid James Bond time!
-		validate("00:07", 0, 7);
+		VALIDATE("00:7", 0, 7); // Also valid James Bond time!
+		VALIDATE("00:07", 0, 7);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("00:007"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:7"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:07"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:007"), std::invalid_argument);
 
 		// String constructor with double digit minutes
-		validate("42", 0, 42);
+		VALIDATE("42", 0, 42);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("042"), std::invalid_argument);
-		validate(":42", 0, 42);
+		VALIDATE(":42", 0, 42);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm(":042"), std::invalid_argument);
-		validate("0:42", 0, 42);
+		VALIDATE("0:42", 0, 42);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("0:042"), std::invalid_argument);
-		validate("00:42", 0, 42);
+		VALIDATE("00:42", 0, 42);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("00:042"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:42"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("000:042"), std::invalid_argument);
 
-		validate("9:5", 9, 5);
-		validate("7:13", 7, 13);
-		validate("10:3", 10, 3);
-		validate("11:48", 11, 48);
-		validate("6:", 6, 0);
-		validate("22:", 22, 0);
+		VALIDATE("9:5", 9, 5);
+		VALIDATE("7:13", 7, 13);
+		VALIDATE("10:3", 10, 3);
+		VALIDATE("11:48", 11, 48);
+		VALIDATE("6:", 6, 0);
+		VALIDATE("22:", 22, 0);
 
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("InvalidTime"), std::invalid_argument);
 		CPPUNIT_ASSERT_THROW(SdH::HoursMinutes hm("28:92"), std::overflow_error);

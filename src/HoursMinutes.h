@@ -50,6 +50,20 @@ namespace SdH {
 			/** Number of minutes. */
 			uint8_t minutes_a;
 
+			/** Parse a character into a number
+			 * @param char_i Input character to parse
+			 * @returns The integer value if parsed properly
+			 * @throws std::invalid_argument if character is not a digit */
+			static uint8_t parseChar(const char char_i);
+
+			/** Parse a string into a number with a given maximum.
+			 * @param str_i Input string to parse
+			 * @param max_i Maximum value for int
+			 * @returns The integer value if parsed properly
+			 * @throws std::overflow_error if int exceeds @p max_i
+			 * @throws std::invalid_argument if string can't be parsed */
+			static uint8_t parse(const std::string & str_i, const uint8_t max_i);
+
 		public:
 			/** Empty constructor initializes to 00:00 */
 			inline HoursMinutes() : hours_a(0), minutes_a(0) {}

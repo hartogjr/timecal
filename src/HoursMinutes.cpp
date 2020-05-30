@@ -32,25 +32,103 @@
 
 #include <cerrno>
 #include <ctime>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include "HoursMinutes.h"
 
 namespace SdH {
 
+	uint8_t HoursMinutes::parseChar(const char char_i)
+	{
+		if (char_i < '0' || char_i > '9') {
+			throw std::invalid_argument(
+				std::string("Invalid character '") + char_i + "' in time string"
+			);
+		}
+
+		return char_i - '0';
+	}
+
+	uint8_t HoursMinutes::parse(const std::string & str_i, const uint8_t max_i)
+	{
+		if (str_i.empty() || str_i == "0" || str_i == "00") return 0;
+
+		uint8_t rv = 0; // Return Value
+
+		switch (str_i.size()) {
+			case 2:
+				rv = parseChar(str_i[0]) * 10 + parseChar(str_i[1]);
+				break;
+
+			case 1:
+				rv = parseChar(str_i[0]);
+				break;
+
+			default:
+				throw std::invalid_argument("Integer string longer than two characters");
+		}
+
+		if (rv > max_i) {
+			std::ostringstream oss;
+
+			oss << "String value \"" << str_i << "\" is a valid integer but is larger than ";
+			oss << static_cast<uint16_t>(max_i);
+			throw std::overflow_error(oss.str());
+		}
+
+		return rv;
+	}
+
 	void HoursMinutes::set(const std::string & hm_i)
 	{
-		UNUSED(hm_i);
+		size_t pos = 0;
+		uint8_t tmphrs = 0;
+		uint8_t tmpmin = 0;
+
+		if (hm_i.empty() || hm_i == ":") {
+			reset();
+			return;
+		}
+
+		pos = hm_i.find(':');
+		if (pos == std::string::npos) {
+			// No hours specified, just minutes
+			tmpmin = parse(hm_i, 59);
+			hours_a = 0;
+			minutes_a = tmpmin;
+			return;
+		}
+
+		tmphrs = parse(hm_i.substr(0, pos), 23);
+		tmpmin = parse(hm_i.substr(pos+1), 59);
+		hours_a = tmphrs;
+		minutes_a = tmpmin;
 	}
 
 	void HoursMinutes::set(const time_t & time_i)
 	{
-		UNUSED(time_i);
+		struct tm *tmptr = nullptr;
+
+		tmptr = localtime(&time_i);
+		if (tmptr == nullptr) {
+			throw std::runtime_error("Unable to break down time to parts");
+		}
+
+		hours_a = tmptr->tm_hour;
+		minutes_a = tmptr->tm_min;
 	}
 
 	HoursMinutes & HoursMinutes::operator+=(const HoursMinutes & rhs_i)
 	{
-		UNUSED(rhs_i);
+		hours_a += rhs_i.hours_a;
+		minutes_a += rhs_i.minutes_a;
+		if (minutes_a > 59) {
+			hours_a++;
+			minutes_a %= 60;
+		}
+
+		if (hours_a > 23) hours_a %= 24;
 
 		return (*this);
 	}
