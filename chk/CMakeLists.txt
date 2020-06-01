@@ -30,6 +30,19 @@
 #
 # vim:set ts=4 sw=4 noet:
 
+# Include stuff for code coverage
+if (RUN_COVERAGE STREQUAL "ON")
+	include(CodeCoverage)
+	append_coverage_compiler_flags()
+	setup_target_for_coverage_gcovr_html(
+		NAME coverage
+		EXECUTABLE chk
+		BASE_DIRECTORY "${PROJECT_SOURCE_DIR}/src"
+		EXCLUDE "${PROJECT_SOURCE_DIR}/chk"
+		"${PROJECT_SOURCE_DIR}/src/timecal.cpp"
+	)
+endif (RUN_COVERAGE STREQUAL "ON")
+
 find_package (cppunit REQUIRED)
 
 include_directories (

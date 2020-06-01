@@ -77,16 +77,5 @@ set (CMAKE_CXX_FLAGS_RELEASE "${CUSTOM_RELEASE}")
 
 # Find necessary packages
 
-# Include stuff for code coverage
-if (RUN_COVERAGE STREQUAL "ON")
-	include(CodeCoverage)
-	append_coverage_compiler_flags()
-	setup_target_for_coverage_gcovr_html(
-		NAME coverage
-		EXECUTABLE chk
-		BASE_DIRECTORY "${PROJECT_SOURCE_DIR}/src"
-	)
-endif (RUN_COVERAGE STREQUAL "ON")
-
 add_subdirectory (src)
 add_subdirectory (chk)
