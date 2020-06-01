@@ -41,8 +41,9 @@ needed. For code coverage generation, `gcovr` is needed. The steps:
 
 == Manual
 
-It reads times either as parameters, or run without parameters, it starts up
-interactive mode in which you can enter more times after one another.
+It reads one or two times either as command line parameters, or when run
+without parameters, it starts in interactive mode, where it reads one or two
+times per line, separated by a single space.
 
 When entering times, one should always use 24-hour format. Leading zeroes can
 be left out. The colon serves as the separator between hours and minutes. So
@@ -57,14 +58,18 @@ valid times include:
 * `17:` -> 17:00 -> five o'clock in the afternoon (pm)
 * `6:7` -> 06:07 -> seven minutes past six in the morning (am)
 
-The same formats are valid for durations. Internally, times and durations are
+The same format is valid for durations. Internally, times and durations are
 not handled separately. One is simply added to the other.
 
 Note that this application takes day boundaries into account. This means that
 any calculated sum will always be a valid time. For example, adding 3 hours
 and 15 minutes (`3:15` or `03:15`) to quarter past 10 in the evening (`22:15`)
 will result in `01:30`, not `25:30` or something like that. In short, hours
-are always calculated modulo 24.
+are always calculated modulo 24. Note that this application does not take
+daylight saving time into consideration.
+
+When using interactive mode, specifying a single time as duration with a
+prefixed plus sign (`+`), the previous answer will be used as the reference time.
 
 == History
 
@@ -73,7 +78,7 @@ couple of minutes. This is of course the goal of the game, but I wasn't too
 happy with me checking my phone every few minutes.
 
 After a while, I started to make a text file with a schedule. I administered
-which processes were running, planned and needed and made a time table when
+which processes were running, planned and needed, and made a time table when
 which process would end or should be initiated. This way, I knew when the
 earliest time was I could purposefully check the game again and in case I was
 a bit later, which processes were done and which I could initiate. It bothered

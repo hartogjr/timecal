@@ -97,6 +97,8 @@ int main(int argc, char *argv[])
 	cout << "Enter either a duration in [HH:]MM format, or a reference time followed by a duration." << endl;
 	cout << "When only a duration a given, it is added to the current time and the resulting time" << endl;
 	cout << "is returned." << endl;
+	cout << "If only a duration is given, but is prefixed with a plus sign (+), the previous answer" << endl;
+	cout << "is used as the reference time." << endl;
 	cout << "When a reference time is also given, the duration is added to the reference time" << endl;
 	cout << "and the resulting time is displayed." << endl;
 	do {
@@ -109,7 +111,13 @@ int main(int argc, char *argv[])
 		try {
 			pos = line.find(' ');
 			if (pos == std::string::npos) {
-				ref = SdH::HoursMinutes::now();
+				if (line[0] == '+') {
+					// Remove the plus, use previous result as new reference
+					line.replace(0, 1, "");
+				} else {
+					// Use current time as reference
+					ref = SdH::HoursMinutes::now();
+				}
 				dur.set(line);
 			} else {
 				ref.set(line.substr(0, pos));
