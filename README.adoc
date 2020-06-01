@@ -19,6 +19,26 @@ another time you can specify.
 
 This application is licensed under the BSD-3 license. See LICENSE for details.
 
+== Building
+
+To build this application, one needs `cmake` and a C\++ compiler that
+supports the C++-17 standard. For unitchecks, the `cppunit` library is
+needed. For code coverage generation, `gcovr` is needed. The steps:
+
+. Clone this repository: +
+  `git clone https://github.com/hartogjr/timecal.git timecal`
+. Go to the `bld` subdirectory: +
+  `cd timecal/bld`
+. Then choose between Debug or Release version:
+** Run CMake with code coverage:
+  `cmake -DCMAKE_BUILD_TYPE=Debug ..`
+** Run CMake without code coverage:
+  `cmake -DCMAKE_BUILD_TYPE=Release ..`
+. Run make:
+  `make`
+. Run the application in the `bld/src` dir:
+  `./src/timecal`
+
 == Manual
 
 It reads times either as parameters, or run without parameters, it starts up
