@@ -32,6 +32,7 @@
 
 #include <cerrno>
 #include <ctime>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -134,3 +135,10 @@ namespace SdH {
 	}
 
 } // SdH namespace
+
+std::ostream & operator<<(std::ostream & os, const SdH::HoursMinutes & hm)
+{
+	os << std::dec << std::setw(2) << std::setfill('0') <<
+		static_cast<uint16_t>(hm.hours()) << ':' << static_cast<uint16_t>(hm.minutes());
+	return os;
+}

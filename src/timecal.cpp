@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include "HoursMinutes.h"
 
 using std::cerr, std::cin, std::cout, std::endl;
 
@@ -36,51 +37,12 @@ int help(const std::string & msg = "")
 	cerr << appname << " 23:12 2:54 # will return 02:06" << endl;
 	return retval;
 }
-/*
-int run(const std::string & duration, const std::string & reftime = "")
-{
-	uint8_t refhour, refmin;
-
-	if (reftime.empty()) {
-		setCurrentTime();
-		refhour = curhour;
-		refmin = curmin;
-	} else {
-		size_t pos = reftime.find(':');
-		switch (pos) {
-			case 1:
-				if (reftime[0] < '0' || reftime[0] > '9') {
-					return help("Reference hour and minute should only contain digits");
-				}
-				refhour = reftime[0] - '0';
-				break;
-
-			case 2:
-				if (
-					reftime[0] < '0' ||
-					reftime[0] > '2' ||
-					reftime[1] < '0' ||
-					reftime[1] > '9' ||
-					(
-					 	reftime[0] == '2' &&
-						reftime[1] > '3'
-					)
-				) {
-					return help("Invalid reference hour specified");
-		if (
-			pos == std::string::npos ||
-			pos < 1 ||
-			pos > 2
-		) {
-			std::string msg = "Invalid reference time \"";
-			msg.append(reftime);
-			msg.append("\" specified");
-			return help(msg);
-			*/
 
 int main(int argc, char *argv[])
 {
 	size_t pos = std::string::npos;
+	SdH::HoursMinutes ref, dur;
+	std::string line; // Input line
 
 	// C++ version of basename(3)
 	appname = argv[0];
@@ -89,17 +51,79 @@ int main(int argc, char *argv[])
 
 	switch (argc) {
 		case 3:
+			try {
+				ref.set(argv[1]);
+				dur.set(argv[2]);
+				ref += dur;
+				cout << ref << endl;
+				return 0;
+			} catch (const std::exception & se) {
+				return help(se.what());
+			}
 
 			break;
 
 		case 2:
+			if (
+				!strcmp(argv[1], "-h") ||
+				!strcmp(argv[1], "--help") ||
+				!strcmp(argv[1], "-?") ||
+				!strcmp(argv[1], "help") ||
+				!strcmp(argv[1], "?")
+			) {
+				return help();
+			}
 
+			try {
+				ref = SdH::HoursMinutes::now();
+				dur.set(argv[1]);
+				ref += dur;
+				cout << ref << endl;
+				return 0;
+			} catch (const std::exception & se) {
+				return help(se.what());
+			}
+
+		case 1:
+			// Run the interactive loop outside this switch statement
 			break;
 
 		default:
 			return help();
-
 	}
+
+	cout << "Welcome to " << appname << "!" << endl;
+	cout << "You are in interactive mode. Use Ctrl-C, Ctrl-D, \"q\" or \"quit\" command to exit." << endl;
+	cout << "Enter either a duration in [HH:]MM format, or a reference time followed by a duration." << endl;
+	cout << "When only a duration a given, it is added to the current time and the resulting time" << endl;
+	cout << "is returned." << endl;
+	cout << "When a reference time is also given, the duration is added to the reference time" << endl;
+	cout << "and the resulting time is displayed." << endl;
+	do {
+		cout << "> "; cout.flush();
+		std::getline(cin, line);
+
+		if (line.empty()) continue;
+		if (line == "q" || line == "quit") break;
+
+		try {
+			pos = line.find(' ');
+			if (pos == std::string::npos) {
+				ref = SdH::HoursMinutes::now();
+				dur.set(line);
+			} else {
+				ref.set(line.substr(0, pos));
+				dur.set(line.substr(pos+1));
+			}
+			ref += dur;
+			cout << ref << endl;
+		} catch (const std::invalid_argument & ia) {
+			cout << ia.what() << endl;
+		} catch (const std::overflow_error & ofe) {
+			cout << ofe.what() << endl;
+		}
+
+	} while (cin.good());
 
 	return 0;
 }

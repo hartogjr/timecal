@@ -163,3 +163,6 @@ namespace SdH {
 	};
 
 } // SdH namespace
+
+/** Stream output operator for SdH::HoursMinutes object. */
+std::ostream & operator<<(std::ostream & os, const SdH::HoursMinutes & hm);
