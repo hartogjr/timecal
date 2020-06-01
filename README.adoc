@@ -1,0 +1,74 @@
+= TimeCal: Time and duration calculations
+Simon de_Hartog <simon@dehartog.name>
+:doctype: article
+// :toc:
+// :numbered:
+
+== Introduction
+
+I set up this project for the game called
+https://playrix.com/township/index.html[Township™], developed by
+https://playrix.com/[Playrix]. In this game and probably many others, one
+needs to initiate some process, which takes a certain amount of time, after
+which you have to initiate another process.
+
+This small application facilitates calculations needed to set up a timetable
+for the game. It allows reading durations from the command line and
+calculating when that duration will have passed, based on the current time or
+another time you can specify.
+
+This application is licensed under the BSD-3 license. See LICENSE for details.
+
+== Manual
+
+It reads times either as parameters, or run without parameters, it starts up
+interactive mode in which you can enter more times after one another.
+
+When entering times, one should always use 24-hour format. Leading zeroes can
+be left out. The colon serves as the separator between hours and minutes. So
+valid times include:
+
+* `23:59` -> 1 minute to midnight
+* `:` -> 00:00 -> midnight
+* `0` -> 00:00 -> also midnight
+* `3:` -> 03:00 -> 3 o'clock in the morning (am)
+* `:45` -> 00:45 -> quarter to one in the night (am)
+* `30` -> 00:30 -> half past twelve in the night (am)
+* `17:` -> 17:00 -> five o'clock in the afternoon (pm)
+* `6:7` -> 06:07 -> seven minutes past six in the morning (am)
+
+The same formats are valid for durations. Internally, times and durations are
+not handled separately. One is simply added to the other.
+
+Note that this application takes day boundaries into account. This means that
+any calculated sum will always be a valid time. For example, adding 3 hours
+and 15 minutes (`3:15` or `03:15`) to quarter past 10 in the evening (`22:15`)
+will result in `01:30`, not `25:30` or something like that. In short, hours
+are always calculated modulo 24.
+
+== History
+
+I noticed I got a bit too addicted to the game, checking every process every
+couple of minutes. This is of course the goal of the game, but I wasn't too
+happy with me checking my phone every few minutes.
+
+After a while, I started to make a text file with a schedule. I administered
+which processes were running, planned and needed and made a time table when
+which process would end or should be initiated. This way, I knew when the
+earliest time was I could purposefully check the game again and in case I was
+a bit later, which processes were done and which I could initiate. It bothered
+me that I had to calculate all the times manually. This is why I created this
+small command-line application.
+
+During development, I thought it could be useful to others too and therefore
+made a GitHub project out of it. This in turn made me want to be proud of my
+code, resulting in a little over-engineering with unitchecks, command-line
+interface, CMake and code coverage reporting.
+
+== Plans
+
+When I really have nothing to do any more, perhaps I will reverse engineer the
+protocol used by Playrix and create an API. This would allow me to let my
+computer do most of the planning and process initiation, probably taking the
+fun out of playing, but replacing it with the satisfaction of having my town
+improve by itself without my help, saving me a lot of time ;-)
