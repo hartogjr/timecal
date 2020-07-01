@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
 				ref.set(line.substr(0, pos));
 				dur.set(line.substr(pos+1));
 			}
+			cout << ref << " + " << dur << " = ";
 			ref += dur;
 			cout << ref << endl;
 		} catch (const std::invalid_argument & ia) {
