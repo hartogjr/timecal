@@ -1,5 +1,5 @@
 = TimeCal: Time and duration calculations
-Simon de_Hartog <simon@dehartog.name>
+Bren de_Hartog <bren@dehartog.name>
 :doctype: article
 // :toc:
 // :numbered:

@@ -1,6 +1,6 @@
 # BSD 3-Clause License
 #
-# Copyright (c) 2020, Simon de Hartog <simon@dehartog.name>
+# Copyright (c) 2026, Bren de Hartog <bren@dehartog.name>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,8 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# vim:set ts=2 sw=2 noexpandtab:
 
-cmake_minimum_required (VERSION 3.4)
+cmake_minimum_required (VERSION 3.30)
 if(POLICY CMP0015)
 	cmake_policy(SET CMP0015 NEW)
 endif()
